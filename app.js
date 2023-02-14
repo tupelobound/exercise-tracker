@@ -8,7 +8,7 @@ const bodyParser = require('body-parser')
 const port = 3000
 
 // Mount the body parser
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // connect to mongodb database
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -53,6 +53,13 @@ app.post('/api/exercise/new-user', (req, res) => {
       res.send('Sorry! Username already taken');
     }
   });
+});
+
+// Create endpoint for getting list of users in database
+app.get('/api/exercise/users', (req, res) => {
+  User.find({}, (err, result) => {
+    res.send(result);
+  })
 });
 
 // listen for requests
