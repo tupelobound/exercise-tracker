@@ -90,7 +90,6 @@ app.post('/api/exercise/add', (req, res) => {
 
 // Create route for requesting log
 app.get('/api/exercise/log', (req, res) => {
-  console.log(req.query);
   if (req.query.UserId && req.query.from && req.query.to) {
     Workout.find({ userID: req.query.UserId, date: { $gt: req.query.from, $lt: req.query.to } }).select('-_id').limit(Number(req.query.limit)).exec((err, result) => {
       res.send('Log: ' + result + ' Exercise count: ' + result.length);
