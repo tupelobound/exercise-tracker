@@ -5,6 +5,7 @@ const app = express()
 const mongoose = require('mongoose')
 const shortid = require('shortid')
 const bodyParser = require('body-parser')
+const moment = require('moment')
 const port = 3000
 
 // Mount the body parser
@@ -62,6 +63,30 @@ app.get('/api/exercise/users', (req, res) => {
   })
 });
 
+// Add workout from POST
+app.post('/api/exercise/add', (req, res) => {
+  // Search for user in user database
+  User.findById(req.body.userId, (err, result) => {
+    if (result) {
+      // Create and save new workout in workout database
+      // Check if a date was supplied
+      if (req.body.date) {
+        var newWorkout = new Workout({ userID: req.body.userId, description: req.body.description, duration: req.body.duration, date: req.body.date }); // if so, use it
+      } else {
+        var newWorkout = new Workout({ userID: req.body.userId, description: req.body.description, duration: req.body.duration }); // if not, default is used
+      }
+      newWorkout.save((err, result) => {
+        if (err) {
+          res.send('Something went wrong, are you sure you included all the required information?') // send user error
+        } else {
+          res.json({ userID: result.userID, description: result.description, duration: result.duration, date: moment(result.date).format('YYYY-MM-DD') });
+        }
+      })
+    } else {
+      res.send("That user isn't present in the database");
+    }
+  })
+})
 // listen for requests
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
