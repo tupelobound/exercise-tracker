@@ -42,18 +42,10 @@ app.use(express.static('public'))
 app.post('/api/exercise/new-user', (req, res) => {
   // check if new user exists in the database
   User.find({ username: req.body.username }, (err, result) => {
-    // handle error
-    if (err) {
-      console.log(err.stack)
-    }
     // if not, create and save a new user
     if (result.length === 0) {
       const newUser = new User({ username: req.body.username })
       newUser.save((err, result) => {
-        // handle error
-        if (err) {
-          console.log(err.stack)
-        }
         res.json({ username: result.username, _id: result._id })
       })
       // if so, send the user a message
@@ -66,10 +58,6 @@ app.post('/api/exercise/new-user', (req, res) => {
 // Create endpoint for getting list of users in database
 app.get('/api/exercise/users', (req, res) => {
   User.find({}, (err, result) => {
-    // handle error
-    if (err) {
-      console.log(err.stack)
-    }
     res.send(result)
   })
 })
@@ -78,10 +66,6 @@ app.get('/api/exercise/users', (req, res) => {
 app.post('/api/exercise/add', (req, res) => {
   // Search for user in user database
   User.findById(req.body.userId, (err, result) => {
-    // handle error
-    if (err) {
-      console.log(err.stack)
-    }
     if (result) {
       // Create and save new workout in workout database
       // Check if a date was supplied
@@ -108,34 +92,18 @@ app.post('/api/exercise/add', (req, res) => {
 app.get('/api/exercise/log', (req, res) => {
   if (req.query.UserId && req.query.from && req.query.to) {
     Workout.find({ userID: req.query.UserId, date: { $gt: req.query.from, $lt: req.query.to } }).select('-_id').limit(Number(req.query.limit)).exec((err, result) => {
-      // handle error
-      if (err) {
-        console.log(err.stack)
-      }
       res.send('Log: ' + result + ' Exercise count: ' + result.length)
     })
   } else if (req.query.UserId && req.query.from) {
     Workout.find({ userID: req.query.UserId, date: { $gt: req.query.from, $lt: new Date() } }).limit(Number(req.query.limit)).exec((err, result) => {
-      // handle error
-      if (err) {
-        console.log(err.stack)
-      }
       res.send('Log: ' + result + ' Exercise count: ' + result.length)
     })
   } else if (req.query.UserId && req.query.to) {
     Workout.find({ userID: req.query.UserId, date: { $gt: new Date('1970'), $lt: req.query.to } }).limit(Number(req.query.limit)).exec((err, result) => {
-      // handle error
-      if (err) {
-        console.log(err.stack)
-      }
       res.send('Log: ' + result + ' Exercise count: ' + result.length)
     })
   } else if (req.query.UserId) {
     Workout.find({ userID: req.query.UserId }).limit(Number(req.query.limit)).exec((err, result) => {
-      // handle error
-      if (err) {
-        console.log(err.stack)
-      }
       res.send('Log: ' + result + ' Exercise count: ' + result.length)
     })
   } else {
